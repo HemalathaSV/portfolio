@@ -1,38 +1,67 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
 
-// modify the interface with any CRUD methods
-// you might need
+import { 
+  skills, projects, education, certifications, messages,
+  type InsertSkill, type InsertProject, type InsertEducation, type InsertCertification, type InsertMessage,
+  type Skill, type Project, type Education, type Certification, type Message
+} from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getSkills(): Promise<Skill[]>;
+  getProjects(): Promise<Project[]>;
+  getEducation(): Promise<Education[]>;
+  getCertifications(): Promise<Certification[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  
+  // Seed methods
+  createSkill(skill: InsertSkill): Promise<Skill>;
+  createProject(project: InsertProject): Promise<Project>;
+  createEducation(edu: InsertEducation): Promise<Education>;
+  createCertification(cert: InsertCertification): Promise<Certification>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
-  constructor() {
-    this.users = new Map();
+export class DatabaseStorage implements IStorage {
+  async getSkills(): Promise<Skill[]> {
+    return await db.select().from(skills);
   }
 
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+  async getProjects(): Promise<Project[]> {
+    return await db.select().from(projects);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+  async getEducation(): Promise<Education[]> {
+    return await db.select().from(education);
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async getCertifications(): Promise<Certification[]> {
+    return await db.select().from(certifications);
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const [newMessage] = await db.insert(messages).values(message).returning();
+    return newMessage;
+  }
+
+  async createSkill(skill: InsertSkill): Promise<Skill> {
+    const [newSkill] = await db.insert(skills).values(skill).returning();
+    return newSkill;
+  }
+
+  async createProject(project: InsertProject): Promise<Project> {
+    const [newProject] = await db.insert(projects).values(project).returning();
+    return newProject;
+  }
+
+  async createEducation(edu: InsertEducation): Promise<Education> {
+    const [newEdu] = await db.insert(education).values(edu).returning();
+    return newEdu;
+  }
+
+  async createCertification(cert: InsertCertification): Promise<Certification> {
+    const [newCert] = await db.insert(certifications).values(cert).returning();
+    return newCert;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
