@@ -1,8 +1,8 @@
 
 import { 
-  skills, projects, education, certifications, messages,
-  type InsertSkill, type InsertProject, type InsertEducation, type InsertCertification, type InsertMessage,
-  type Skill, type Project, type Education, type Certification, type Message
+  skills, projects, publications, education, certifications, messages,
+  type InsertSkill, type InsertProject, type InsertPublication, type InsertEducation, type InsertCertification, type InsertMessage,
+  type Skill, type Project, type Publication, type Education, type Certification, type Message
 } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 export interface IStorage {
   getSkills(): Promise<Skill[]>;
   getProjects(): Promise<Project[]>;
+  getPublications(): Promise<Publication[]>;
   getEducation(): Promise<Education[]>;
   getCertifications(): Promise<Certification[]>;
   createMessage(message: InsertMessage): Promise<Message>;
@@ -17,6 +18,7 @@ export interface IStorage {
   // Seed methods
   createSkill(skill: InsertSkill): Promise<Skill>;
   createProject(project: InsertProject): Promise<Project>;
+  createPublication(pub: InsertPublication): Promise<Publication>;
   createEducation(edu: InsertEducation): Promise<Education>;
   createCertification(cert: InsertCertification): Promise<Certification>;
 }
@@ -28,6 +30,10 @@ export class DatabaseStorage implements IStorage {
 
   async getProjects(): Promise<Project[]> {
     return await db.select().from(projects);
+  }
+
+  async getPublications(): Promise<Publication[]> {
+    return await db.select().from(publications);
   }
 
   async getEducation(): Promise<Education[]> {
@@ -51,6 +57,11 @@ export class DatabaseStorage implements IStorage {
   async createProject(project: InsertProject): Promise<Project> {
     const [newProject] = await db.insert(projects).values(project).returning();
     return newProject;
+  }
+
+  async createPublication(pub: InsertPublication): Promise<Publication> {
+    const [newPub] = await db.insert(publications).values(pub).returning();
+    return newPub;
   }
 
   async createEducation(edu: InsertEducation): Promise<Education> {
