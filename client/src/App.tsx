@@ -17,11 +17,11 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const [location] = useLocation();
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navigation />
-      
+
       <main className="flex-grow">
         <AnimatePresence mode="wait">
           <Switch location={location} key={location}>

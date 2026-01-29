@@ -50,6 +50,18 @@ export function useCertifications() {
   });
 }
 
+// Publications
+export function usePublications() {
+  return useQuery({
+    queryKey: [api.publications.list.path],
+    queryFn: async () => {
+      const res = await fetch(api.publications.list.path);
+      if (!res.ok) throw new Error("Failed to fetch publications");
+      return api.publications.list.responses[200].parse(await res.json());
+    },
+  });
+}
+
 // Contact Form Mutation
 type ContactFormInput = z.infer<typeof api.contact.submit.input>;
 
@@ -58,7 +70,7 @@ export function useSubmitContact() {
     mutationFn: async (data: ContactFormInput) => {
       // Validate locally first (optional but good practice)
       const validated = api.contact.submit.input.parse(data);
-      
+
       const res = await fetch(api.contact.submit.path, {
         method: api.contact.submit.method,
         headers: { "Content-Type": "application/json" },
@@ -72,7 +84,7 @@ export function useSubmitContact() {
         }
         throw new Error("Failed to send message");
       }
-      
+
       return api.contact.submit.responses[201].parse(await res.json());
     },
   });

@@ -8,7 +8,7 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  
+
   app.get(api.skills.list.path, async (_req, res) => {
     const skills = await storage.getSkills();
     res.json(skills);

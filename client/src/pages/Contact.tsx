@@ -16,7 +16,7 @@ export default function Contact() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const { mutate: submitMessage, isPending } = useSubmitContact();
-  
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -52,7 +52,7 @@ export default function Contact() {
 
       <div className="grid lg:grid-cols-2 gap-16">
         {/* Contact Info */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="space-y-8"
@@ -76,34 +76,12 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                <MapPin className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white mb-1">Location</h4>
-                <p className="text-muted-foreground">
-                  Bangalore, India
-                </p>
-              </div>
-            </div>
 
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-lg bg-primary/10 text-primary">
-                <Phone className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white mb-1">Phone</h4>
-                <p className="text-muted-foreground">
-                  +91 98765 43210
-                </p>
-              </div>
-            </div>
           </div>
         </motion.div>
 
         {/* Contact Form */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}

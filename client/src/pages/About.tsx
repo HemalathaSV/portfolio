@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { SectionHeader } from "@/components/SectionHeader";
-import { useEducation, useCertifications } from "@/hooks/use-portfolio";
-import { Calendar, Award, GraduationCap } from "lucide-react";
+import { useEducation, useCertifications, usePublications } from "@/hooks/use-portfolio";
+import { Calendar, Award, GraduationCap, BookOpen, ExternalLink } from "lucide-react";
 
 export default function About() {
   const { data: education, isLoading: eduLoading } = useEducation();
   const { data: certifications, isLoading: certLoading } = useCertifications();
+  const { data: publications, isLoading: pubLoading } = usePublications();
 
   return (
     <div className="min-h-screen pt-32 pb-20 container mx-auto px-4">
@@ -13,36 +14,52 @@ export default function About() {
 
       <div className="grid lg:grid-cols-2 gap-16 items-start">
         {/* Bio Text */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="space-y-6 text-lg text-muted-foreground"
         >
           <p className="leading-relaxed">
-            I am a passionate <span className="text-foreground font-semibold">AI & ML Engineer</span> with a strong background in building scalable data pipelines and intelligent systems.
+            I am a motivated <span className="text-foreground font-semibold">Computer Science student</span> specializing in Artificial Intelligence and Machine Learning. I am passionate about solving complex problems through technology and eager to apply my skills in real-world projects.
           </p>
           <p className="leading-relaxed">
-            My journey began with a fascination for data and patterns. Over the years, I've honed my skills in Python, TensorFlow, and cloud architectures to solve real-world problems. Whether it's optimizing a recommendation engine or deploying a computer vision model to the edge, I thrive on the challenge.
-          </p>
-          <p className="leading-relaxed">
-            When I'm not coding, I'm exploring new research papers, contributing to open source, or mentoring aspiring developers in the community.
+            My focus is on build intelligent systems, working on projects ranging from diet recommendation systems to tournament management applications. I am constantly learning and looking for collaborative opportunities.
           </p>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/10">
-            <div className="p-4 rounded-xl bg-card border border-white/5">
-              <div className="text-3xl font-bold text-primary mb-1">50+</div>
-              <div className="text-sm">Projects Completed</div>
-            </div>
-            <div className="p-4 rounded-xl bg-card border border-white/5">
-              <div className="text-3xl font-bold text-secondary mb-1">10+</div>
-              <div className="text-sm">Certifications</div>
-            </div>
-          </div>
+
         </motion.div>
 
-        {/* Timeline / Education */}
+        {/* Timeline / Education / Publications */}
         <div className="space-y-12">
+          {/* Publications Section */}
+          <div>
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+              <BookOpen className="text-blue-400" /> Publications
+            </h3>
+            <div className="space-y-6">
+              {pubLoading ? (
+                <div className="h-24 bg-muted/20 rounded animate-pulse" />
+              ) : publications?.map((pub, index) => (
+                <motion.a
+                  key={pub.id}
+                  href={pub.link || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="block p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
+                >
+                  <h4 className="text-lg font-bold text-white group-hover:text-primary transition-colors flex items-center gap-2">
+                    {pub.title} <ExternalLink className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </h4>
+                  <div className="text-sm font-mono text-primary mt-1 mb-2">{pub.publisher} • {pub.date}</div>
+                  <p className="text-muted-foreground">{pub.description}</p>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+
           {/* Education Section */}
           <div>
             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
@@ -52,7 +69,7 @@ export default function About() {
               {eduLoading ? (
                 <div className="h-24 bg-muted/20 rounded animate-pulse" />
               ) : education?.map((edu, index) => (
-                <motion.div 
+                <motion.div
                   key={edu.id}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -80,7 +97,7 @@ export default function About() {
               {certLoading ? (
                 <div className="h-16 bg-muted/20 rounded animate-pulse" />
               ) : certifications?.map((cert, index) => (
-                <motion.div 
+                <motion.div
                   key={cert.id}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}

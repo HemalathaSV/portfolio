@@ -6,32 +6,40 @@
 
 :root {
   /* Dark Tech Theme Base Colors */
-  --background: 224 71% 4%;     /* Very dark blue/black #030712 */
-  --foreground: 210 40% 98%;    /* Off-white #f8fafc */
-  
+  --background: 224 71% 4%;
+  /* Very dark blue/black #030712 */
+  --foreground: 210 40% 98%;
+  /* Off-white #f8fafc */
+
   /* Primary Accent: Electric Cyan/Blue */
-  --primary: 196 100% 50%;      /* #00CFFF */
+  --primary: 196 100% 50%;
+  /* #00CFFF */
   --primary-foreground: 224 71% 4%;
-  
+
   /* Secondary Accent: Neon Purple */
-  --secondary: 270 100% 60%;    /* #9D00FF */
+  --secondary: 270 100% 60%;
+  /* #9D00FF */
   --secondary-foreground: 210 40% 98%;
-  
+
   /* Muted / Surface Colors */
-  --muted: 217 33% 17%;         /* #1e293b */
-  --muted-foreground: 215 20% 65%; /* #94a3b8 */
-  
+  --muted: 217 33% 17%;
+  /* #1e293b */
+  --muted-foreground: 215 20% 65%;
+  /* #94a3b8 */
+
   /* UI Elements */
-  --card: 217 33% 11%;          /* #111827 - Slightly lighter than bg */
+  --card: 217 33% 11%;
+  /* #111827 - Slightly lighter than bg */
   --card-foreground: 210 40% 98%;
   --popover: 224 71% 4%;
   --popover-foreground: 210 40% 98%;
-  
-  --border: 217 33% 20%;        /* #1e293b */
+
+  --border: 217 33% 20%;
+  /* #1e293b */
   --input: 217 33% 20%;
-  
+
   --radius: 0.75rem;
-  
+
   /* Typography */
   --font-sans: 'Space Grotesk', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -40,13 +48,21 @@
 @layer base {
   body {
     @apply bg-background text-foreground antialiased font-sans overflow-x-hidden;
-    background-image: 
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
       radial-gradient(circle at 50% 0%, hsl(var(--secondary) / 0.15), transparent 40%),
       radial-gradient(circle at 0% 50%, hsl(var(--primary) / 0.1), transparent 40%);
+    background-size: 50px 50px, 50px 50px, auto, auto;
     background-attachment: fixed;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight;
   }
 
@@ -59,20 +75,20 @@
   .glass-card {
     @apply bg-card/80 backdrop-blur-md border border-white/10 shadow-xl;
   }
-  
+
   .neon-border {
     @apply relative transition-all duration-300;
   }
-  
+
   .neon-border::before {
     content: '';
     @apply absolute inset-0 rounded-xl p-[1px] bg-gradient-to-r from-primary to-secondary opacity-50 -z-10 transition-opacity duration-300;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
   }
-  
+
   .neon-border:hover::before {
-    @apply opacity-100 shadow-[0_0_15px_rgba(0,207,255,0.5)];
+    @apply opacity-100 shadow-[0_0_15px_rgba(0, 207, 255, 0.5)];
   }
 }
 
@@ -80,12 +96,15 @@
 ::-webkit-scrollbar {
   width: 10px;
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-background;
 }
+
 ::-webkit-scrollbar-thumb {
   @apply bg-muted rounded-full border-2 border-background;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground;
 }

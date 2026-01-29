@@ -14,9 +14,9 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
       {/* Image / Gradient Placeholder */}
       <div className="h-48 overflow-hidden bg-muted relative">
         {project.imageUrl ? (
-          <img 
-            src={project.imageUrl} 
-            alt={project.title} 
+          <img
+            src={project.imageUrl}
+            alt={project.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
@@ -26,7 +26,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
             </div>
           </div>
         )}
-        
+
         {/* Overlay on hover */}
         <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
@@ -36,7 +36,7 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
           {project.title}
           <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
         </h3>
-        
+
         <p className="text-muted-foreground text-sm mb-6 flex-1 line-clamp-3">
           {project.description}
         </p>
@@ -44,8 +44,8 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {project.technologies?.map((tech) => (
-              <span 
-                key={tech} 
+              <span
+                key={tech}
                 className="px-2.5 py-1 text-xs font-mono rounded-md bg-white/5 text-primary/80 border border-white/5"
               >
                 {tech}
@@ -54,9 +54,9 @@ export function ProjectCard({ project, index }: { project: Project; index: numbe
           </div>
 
           {project.link && (
-            <a 
-              href={project.link} 
-              target="_blank" 
+            <a
+              href={project.link}
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-white hover:text-primary transition-colors"
             >
