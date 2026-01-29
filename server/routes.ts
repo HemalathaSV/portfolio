@@ -1,4 +1,3 @@
-
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
@@ -83,7 +82,7 @@ async function seedDatabase() {
       technologies: ["FastAPI", "SQLite", "Agentic AI", "Multi-Agent Systems", "Python"],
       link: "#",
     });
-    
+
     await storage.createProject({
       title: "Diet Recommendation System",
       description: "A machine learning based recommendation system that suggests personalized diet plans based on user health metrics.",
@@ -122,7 +121,7 @@ async function seedDatabase() {
     const certs = [
       { name: "Solutions Architecture Job Simulation", issuer: "AWS APAC - Forage", date: "Mar 2025" },
       { name: "Tools for Data Science", issuer: "IBM", date: "Oct 2025" },
-      { name: "3 Day Agentic Ai Mini Project", issuer: "Unknown", date: "Nov 2025" },
+      { name: "3 Day Agentic Ai Mini Project", issuer: "Nov 2025", date: "Nov 2025" },
       { name: "Crash Course on Python", issuer: "Google", date: "Oct 2025" },
       { name: "Software Engineering Job Simulation", issuer: "Wells Fargo", date: "Jul 2025" },
       { name: "Gen AI powered Data Analytics Job Simulation", issuer: "Tata", date: "Sep 2025" },
