@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type insertMessageSchema } from "@shared/routes";
+import { api } from "@shared/routes";
+
 import { z } from "zod";
 
 // Skills

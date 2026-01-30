@@ -70,8 +70,8 @@ export default function Contact() {
               </div>
               <div>
                 <h4 className="font-bold text-white mb-1">Email Me</h4>
-                <a href="mailto:hemalatha@example.com" className="text-muted-foreground hover:text-primary transition-colors">
-                  hemalatha@example.com
+                <a href="mailto:heamalathasv@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                  heamalathasv@gmail.com
                 </a>
               </div>
             </div>

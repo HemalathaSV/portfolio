@@ -35,7 +35,24 @@ export function log(message: string, source = "express") {
 
 // Create a promise that resolves when the server is ready
 let isReady = false;
-const readyPromise = (async () => {
+let resolveReady: () => void = () => { };
+const readyPromise = new Promise<void>((resolve) => {
+  resolveReady = resolve;
+});
+
+
+// Middleware to wait for the server to be ready (important for Vercel)
+// This MUST be added before any routes are registered
+app.use(async (_req, _res, next) => {
+  if (!isReady) {
+    log("Waiting for server to be ready...");
+    await readyPromise;
+  }
+  next();
+});
+
+// Start server initialization in the background
+(async () => {
   try {
     log("Starting server initialization...");
     await registerRoutes(httpServer, app);
@@ -63,20 +80,15 @@ const readyPromise = (async () => {
     }
 
     isReady = true;
+    resolveReady();
     log("Server initialization complete.");
   } catch (err) {
     console.error("Server initialization failed:", err);
-    throw err;
+    process.exit(1);
   }
 })();
 
-// Middleware to wait for the server to be ready (important for Vercel)
-app.use(async (_req, _res, next) => {
-  if (!isReady) {
-    await readyPromise;
-  }
-  next();
-});
+
 
 app.use((req, res, next) => {
   const start = Date.now();
