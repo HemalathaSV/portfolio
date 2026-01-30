@@ -3,6 +3,9 @@ import type { Server } from "http";
 import { storage } from "./storage";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import { projects } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -85,7 +88,7 @@ async function seedDatabase() {
           title: "Agentic AI–Based Tournament Management System",
           description: "Designed and developed an automated system for scheduling, team registration, and result tracking using autonomous multi-agent systems. Built a scalable backend with FastAPI and SQLite. Integrated NLP query assistant. Published in IJCRT.",
           technologies: ["FastAPI", "SQLite", "Agentic AI", "Multi-Agent Systems", "Python"],
-          link: "#",
+          link: "https://github.com/HemalathaSV/EVO_MIND_77",
         },
         {
           title: "Diet Recommendation System",
@@ -145,7 +148,15 @@ async function seedDatabase() {
 
       console.log("Database seeding finished.");
     } else {
-      console.log("Database already has data. Skipping seeding.");
+      console.log("Database already has data. Checking for project link updates...");
+      const projectsData = await storage.getProjects();
+      const agenticAI = projectsData.find(p => p.title.includes("Agentic AI"));
+      if (agenticAI && agenticAI.link !== "https://github.com/HemalathaSV/EVO_MIND_77") {
+        console.log("Updating Agentic AI project link...");
+        await db!.update(projects)
+          .set({ link: "https://github.com/HemalathaSV/EVO_MIND_77" })
+          .where(eq(projects.id, agenticAI.id));
+      }
     }
   } catch (error) {
     console.error("Database seeding failed:", error);

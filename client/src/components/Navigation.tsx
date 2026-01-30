@@ -8,7 +8,6 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/skills", label: "Skills" },
-  { href: "/projects", label: "Projects" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -17,44 +16,47 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-lg bg-background/80 border-b border-white/5">
-      <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+    <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between pointer-events-auto">
+        {/* Logo - kept at top left */}
+        <Link href="/" className="flex items-center gap-2 group pointer-events-auto">
           <div className="relative w-8 h-8 flex items-center justify-center bg-primary/10 rounded-lg overflow-hidden group-hover:bg-primary/20 transition-colors">
             <Cpu className="w-5 h-5 text-primary" />
           </div>
           <span className="font-bold text-lg tracking-tight">Hemalatha S V</span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 bg-white/5 px-2 py-1 rounded-full border border-white/5">
+        {/* Desktop Nav - Vertical on Right */}
+        <nav className="hidden md:flex fixed right-8 top-1/2 -translate-y-1/2 flex-col items-end gap-2 z-50 pointer-events-auto">
           {links.map((link) => {
             const isActive = location === link.href;
             return (
-              <Link key={link.href} href={link.href} className="relative px-4 py-2 text-sm font-medium transition-colors">
+              <Link key={link.href} href={link.href} className="group flex items-center gap-4 py-2">
                 <span className={cn(
-                  "relative z-10",
-                  isActive ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  "text-xs font-bold uppercase tracking-widest transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0",
+                  isActive ? "text-primary opacity-100 translate-x-0" : "text-muted-foreground"
                 )}>
                   {link.label}
                 </span>
-                {isActive && (
-                  <motion.div
-                    layoutId="navbar-indicator"
-                    className="absolute inset-0 bg-primary rounded-full"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
+                <div className={cn(
+                  "w-2 h-2 rounded-full transition-all duration-300",
+                  isActive
+                    ? "bg-primary scale-150 shadow-[0_0_12px_rgba(var(--primary),0.8)]"
+                    : "bg-white/20 group-hover:bg-primary/50"
+                )} />
               </Link>
             );
           })}
+          <div className="w-px h-8 bg-white/10 my-2 self-end mr-[3px]" />
           <a
             href="/resume.pdf"
             download="Resume_Hemalatha.pdf"
-            className="ml-2 px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
+            className="group flex items-center gap-4 py-2"
           >
-            Resume
+            <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 text-muted-foreground">
+              Resume
+            </span>
+            <div className="w-2 h-2 rounded-full bg-primary/80 group-hover:bg-primary group-hover:scale-150 transition-all duration-300" />
           </a>
         </nav>
 
@@ -73,7 +75,7 @@ export function Navigation() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border p-4 shadow-2xl"
+          className="md:hidden absolute top-16 left-0 right-0 bg-background/95 backdrop-blur-lg border-b border-border p-4 shadow-2xl pointer-events-auto"
         >
           <nav className="flex flex-col gap-2">
             {links.map((link) => (
