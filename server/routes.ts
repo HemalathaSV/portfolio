@@ -6,6 +6,7 @@ import { z } from "zod";
 import { projects } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
+import { log } from "./index";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -61,11 +62,12 @@ export async function registerRoutes(
 
 async function seedDatabase() {
   try {
+    log("Starting health check and seeding process...", "db-seed");
+
+    // 1. Skills
     const existingSkills = await storage.getSkills();
     if (existingSkills.length === 0) {
-      console.log("Seeding database triggered...");
-
-      // Skills
+      log("Seeding skills...", "db-seed");
       const skillList = [
         { name: "Python", category: "Languages", proficiency: 90 },
         { name: "C", category: "Languages", proficiency: 80 },
@@ -80,9 +82,15 @@ async function seedDatabase() {
         { name: "IBM Cloud", category: "Cloud", proficiency: 60 },
       ];
       for (const s of skillList) await storage.createSkill(s);
-      console.log(`Successfully seeded ${skillList.length} skills.`);
+      log(`Seeded ${skillList.length} skills.`, "db-seed");
+    } else {
+      log(`${existingSkills.length} skills already exist.`, "db-seed");
+    }
 
-      // Projects
+    // 2. Projects
+    const existingProjects = await storage.getProjects();
+    if (existingProjects.length === 0) {
+      log("Seeding projects...", "db-seed");
       const projectList = [
         {
           title: "Agentic AI–Based Tournament Management System",
@@ -98,9 +106,23 @@ async function seedDatabase() {
         }
       ];
       for (const p of projectList) await storage.createProject(p);
-      console.log(`Successfully seeded ${projectList.length} projects.`);
+      log(`Seeded ${projectList.length} projects.`, "db-seed");
+    } else {
+      log(`${existingProjects.length} projects already exist.`, "db-seed");
+      // Maintenance: Update specific links if needed
+      const agenticAI = existingProjects.find(p => p.title.includes("Agentic AI"));
+      if (agenticAI && agenticAI.link !== "https://github.com/HemalathaSV/EVO_MIND_77" && db) {
+        log("Updating Agentic AI project link...", "db-seed");
+        await db.update(projects)
+          .set({ link: "https://github.com/HemalathaSV/EVO_MIND_77" })
+          .where(eq(projects.id, agenticAI.id));
+      }
+    }
 
-      // Publications
+    // 3. Publications
+    const existingPubs = await storage.getPublications();
+    if (existingPubs.length === 0) {
+      log("Seeding publications...", "db-seed");
       await storage.createPublication({
         title: "Agentic AI-Based Tournament Management System",
         publisher: "International Journal of Creative Research and Development (IJCRT)",
@@ -108,9 +130,15 @@ async function seedDatabase() {
         date: "2025",
         link: "https://ijcrt.org/",
       });
-      console.log("Successfully seeded publications.");
+      log("Seeded publications.", "db-seed");
+    } else {
+      log(`${existingPubs.length} publications already exist.`, "db-seed");
+    }
 
-      // Education
+    // 4. Education
+    const existingEdu = await storage.getEducation();
+    if (existingEdu.length === 0) {
+      log("Seeding education...", "db-seed");
       const eduList = [
         {
           degree: "B.E. in Computer Science & Engineering (AI & ML)",
@@ -130,9 +158,15 @@ async function seedDatabase() {
         }
       ];
       for (const e of eduList) await storage.createEducation(e);
-      console.log(`Successfully seeded ${eduList.length} education entries.`);
+      log(`Seeded ${eduList.length} education entries.`, "db-seed");
+    } else {
+      log(`${existingEdu.length} education entries already exist.`, "db-seed");
+    }
 
-      // Certifications
+    // 5. Certifications
+    const existingCerts = await storage.getCertifications();
+    if (existingCerts.length === 0) {
+      log("Seeding certifications...", "db-seed");
       const certs = [
         { name: "Solutions Architecture Job Simulation", issuer: "AWS APAC - Forage", date: "Mar 2025" },
         { name: "Tools for Data Science", issuer: "IBM", date: "Oct 2025" },
@@ -144,21 +178,13 @@ async function seedDatabase() {
         { name: "Introduction to Microsoft Azure Cloud Services", issuer: "Microsoft", date: "Dec 2025" },
       ];
       for (const c of certs) await storage.createCertification(c);
-      console.log(`Successfully seeded ${certs.length} certifications.`);
-
-      console.log("Database seeding finished.");
+      log(`Seeded ${certs.length} certifications.`, "db-seed");
     } else {
-      console.log("Database already has data. Checking for project link updates...");
-      const projectsData = await storage.getProjects();
-      const agenticAI = projectsData.find(p => p.title.includes("Agentic AI"));
-      if (agenticAI && agenticAI.link !== "https://github.com/HemalathaSV/EVO_MIND_77") {
-        console.log("Updating Agentic AI project link...");
-        await db!.update(projects)
-          .set({ link: "https://github.com/HemalathaSV/EVO_MIND_77" })
-          .where(eq(projects.id, agenticAI.id));
-      }
+      log(`${existingCerts.length} certifications already exist.`, "db-seed");
     }
+
+    log("Database health check complete.", "db-seed");
   } catch (error) {
-    console.error("Database seeding failed:", error);
+    console.error("Database health check/seeding failed:", error);
   }
 }
