@@ -33,6 +33,51 @@ export function log(message: string, source = "express") {
   console.log(`${formattedTime} [${source}] ${message}`);
 }
 
+// Create a promise that resolves when the server is ready
+let isReady = false;
+const readyPromise = (async () => {
+  try {
+    log("Starting server initialization...");
+    await registerRoutes(httpServer, app);
+
+    app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+      console.error("Internal Server Error:", err);
+      if (res.headersSent) return next(err);
+      return res.status(status).json({ message });
+    });
+
+    if (app.get("env") === "development") {
+      const { setupVite } = await import("./vite");
+      await setupVite(httpServer, app);
+    } else if (process.env.VERCEL !== "1") {
+      serveStatic(app);
+    }
+
+    if (process.env.VERCEL !== "1") {
+      const port = parseInt(process.env.PORT || "5000", 10);
+      httpServer.listen({ port, host: "0.0.0.0" }, () => {
+        log(`serving on port ${port}`);
+      });
+    }
+
+    isReady = true;
+    log("Server initialization complete.");
+  } catch (err) {
+    console.error("Server initialization failed:", err);
+    throw err;
+  }
+})();
+
+// Middleware to wait for the server to be ready (important for Vercel)
+app.use(async (_req, _res, next) => {
+  if (!isReady) {
+    await readyPromise;
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -61,47 +106,3 @@ app.use((req, res, next) => {
 
 // Export the app for Vercel
 export default app;
-
-(async () => {
-  await registerRoutes(httpServer, app);
-
-  app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    console.error("Internal Server Error:", err);
-
-    if (res.headersSent) {
-      return next(err);
-    }
-
-    return res.status(status).json({ message });
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    const { setupVite } = await import("./vite");
-    await setupVite(httpServer, app);
-  } else if (process.env.VERCEL !== "1") {
-    serveStatic(app);
-  }
-
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  if (process.env.VERCEL !== "1") {
-    const port = parseInt(process.env.PORT || "5000", 10);
-    httpServer.listen(
-      {
-        port,
-        host: "0.0.0.0",
-      },
-      () => {
-        log(`serving on port ${port}`);
-      },
-    );
-  }
-})();
