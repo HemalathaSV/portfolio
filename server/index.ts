@@ -41,12 +41,22 @@ const readyPromise = new Promise<void>((resolve) => {
 });
 
 
-// Middleware to wait for the server to be ready (important for Vercel)
-// This MUST be added before any routes are registered
-app.use(async (_req, _res, next) => {
-  if (!isReady) {
-    log("Waiting for server to be ready...");
-    await readyPromise;
+// Middleware to wait for the server to be ready (robustness for Vercel/serverless)
+app.use(async (req, _res, next) => {
+  if (!isReady && req.path.startsWith("/api")) {
+    log(`Waiting for server to be ready for ${req.path}...`);
+
+    // Safety timeout: 15 seconds
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Server initialization timeout")), 15000)
+    );
+
+    try {
+      await Promise.race([readyPromise, timeout]);
+    } catch (err: any) {
+      log(`Ready check failed: ${err.message}`);
+      // Continue anyway, seeding will happen per-request in ensureSeeded()
+    }
   }
   next();
 });

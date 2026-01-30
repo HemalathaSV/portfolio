@@ -1,5 +1,13 @@
 import { z } from 'zod';
-import { insertMessageSchema, skills, projects, publications, education, certifications, messages } from './schema';
+import {
+  insertMessageSchema,
+  selectSkillSchema,
+  selectProjectSchema,
+  selectPublicationSchema,
+  selectEducationSchema,
+  selectCertificationSchema,
+  selectMessageSchema
+} from './schema';
 
 export const errorSchemas = {
   validation: z.object({
@@ -17,7 +25,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/skills',
       responses: {
-        200: z.array(z.custom<typeof skills.$inferSelect>()),
+        200: z.array(selectSkillSchema),
       },
     },
   },
@@ -26,7 +34,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/projects',
       responses: {
-        200: z.array(z.custom<typeof projects.$inferSelect>()),
+        200: z.array(selectProjectSchema),
       },
     },
   },
@@ -35,7 +43,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/publications',
       responses: {
-        200: z.array(z.custom<typeof publications.$inferSelect>()),
+        200: z.array(selectPublicationSchema),
       },
     },
   },
@@ -44,7 +52,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/education',
       responses: {
-        200: z.array(z.custom<typeof education.$inferSelect>()),
+        200: z.array(selectEducationSchema),
       },
     },
   },
@@ -53,7 +61,7 @@ export const api = {
       method: 'GET' as const,
       path: '/api/certifications',
       responses: {
-        200: z.array(z.custom<typeof certifications.$inferSelect>()),
+        200: z.array(selectCertificationSchema),
       },
     },
   },
@@ -63,7 +71,7 @@ export const api = {
       path: '/api/contact',
       input: insertMessageSchema,
       responses: {
-        201: z.custom<typeof messages.$inferSelect>(),
+        201: selectMessageSchema,
         400: errorSchemas.validation,
       },
     },

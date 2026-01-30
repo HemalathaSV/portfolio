@@ -1,5 +1,5 @@
 import { pgTable, text, serial, timestamp, integer } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Content Tables
@@ -60,6 +60,14 @@ export const insertEducationSchema = createInsertSchema(education).omit({ id: tr
 export const insertCertificationSchema = createInsertSchema(certifications).omit({ id: true });
 export const insertMessageSchema = createInsertSchema(messages).omit({ id: true, createdAt: true });
 
+// Select Schemas for API responses
+export const selectSkillSchema = createSelectSchema(skills);
+export const selectProjectSchema = createSelectSchema(projects);
+export const selectPublicationSchema = createSelectSchema(publications);
+export const selectEducationSchema = createSelectSchema(education);
+export const selectCertificationSchema = createSelectSchema(certifications);
+export const selectMessageSchema = createSelectSchema(messages);
+
 // Types
 export type Skill = typeof skills.$inferSelect;
 export type InsertSkill = z.infer<typeof insertSkillSchema>;
@@ -72,5 +80,4 @@ export type InsertEducation = z.infer<typeof insertEducationSchema>;
 export type Certification = typeof certifications.$inferSelect;
 export type InsertCertification = z.infer<typeof insertCertificationSchema>;
 export type Message = typeof messages.$inferSelect;
-export type InsertMessage = z.infer<typeof insertMessageSchema>;
 

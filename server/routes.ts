@@ -15,12 +15,45 @@ export async function registerRoutes(
 
   // Ensure data exists before responding (robustness for serverless cold starts)
   const ensureSeeded = async () => {
-    const skillsCount = (await storage.getSkills()).length;
-    if (skillsCount === 0) {
-      log("Data missing during request, triggering emergency seed...", "db-seed");
-      await seedDatabase();
+    try {
+      const [s, p, pub, edu, cert] = await Promise.all([
+        storage.getSkills(),
+        storage.getProjects(),
+        storage.getPublications(),
+        storage.getEducation(),
+        storage.getCertifications()
+      ]);
+
+      if (s.length === 0 || p.length === 0 || pub.length === 0 || edu.length === 0 || cert.length === 0) {
+        log("Data missing in one or more tables, triggering emergency seed...", "db-seed");
+        await seedDatabase();
+      }
+    } catch (error) {
+      console.error("Emergency seed check failed:", error);
     }
   };
+
+  // Status endpoint for debugging
+  app.get("/api/status", async (_req, res) => {
+    try {
+      const stats = {
+        env: process.env.NODE_ENV,
+        isVercel: !!process.env.VERCEL,
+        hasDbUrl: !!process.env.DATABASE_URL,
+        counts: {
+          skills: (await storage.getSkills()).length,
+          projects: (await storage.getProjects()).length,
+          publications: (await storage.getPublications()).length,
+          education: (await storage.getEducation()).length,
+          certifications: (await storage.getCertifications()).length,
+        },
+        timestamp: new Date().toISOString()
+      };
+      res.json(stats);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
 
   app.get(api.skills.list.path, async (_req, res) => {
     await ensureSeeded();
