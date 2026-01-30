@@ -84,7 +84,7 @@ export default app;
   if (app.get("env") === "development") {
     const { setupVite } = await import("./vite");
     await setupVite(httpServer, app);
-  } else {
+  } else if (process.env.VERCEL !== "1") {
     serveStatic(app);
   }
 
