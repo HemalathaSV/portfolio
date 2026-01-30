@@ -13,27 +13,41 @@ export async function registerRoutes(
   app: Express
 ): Promise<Server> {
 
+  // Ensure data exists before responding (robustness for serverless cold starts)
+  const ensureSeeded = async () => {
+    const skillsCount = (await storage.getSkills()).length;
+    if (skillsCount === 0) {
+      log("Data missing during request, triggering emergency seed...", "db-seed");
+      await seedDatabase();
+    }
+  };
+
   app.get(api.skills.list.path, async (_req, res) => {
+    await ensureSeeded();
     const skills = await storage.getSkills();
     res.json(skills);
   });
 
   app.get(api.projects.list.path, async (_req, res) => {
+    await ensureSeeded();
     const projects = await storage.getProjects();
     res.json(projects);
   });
 
   app.get(api.publications.list.path, async (_req, res) => {
+    await ensureSeeded();
     const publications = await storage.getPublications();
     res.json(publications);
   });
 
   app.get(api.education.list.path, async (_req, res) => {
+    await ensureSeeded();
     const education = await storage.getEducation();
     res.json(education);
   });
 
   app.get(api.certifications.list.path, async (_req, res) => {
+    await ensureSeeded();
     const certifications = await storage.getCertifications();
     res.json(certifications);
   });
